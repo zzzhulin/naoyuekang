@@ -1,0 +1,60 @@
+{
+	"pages": [{
+			"path": "pages/launch/index"
+		},
+		{
+			"path": "pages/home/index"
+		},
+		{
+			"path": "pages/social/index"
+		},
+		{
+			"path": "pages/mall/index"
+		},
+		{
+			"path": "pages/mine/index"
+		}
+	],
+	"tabBar": {
+		"color": "#000026",
+		"selectedColor": "#1A8DFF",
+		"borderStyle": "white",
+		"backgroundColor": "#ffffff",
+		"list": [{
+				"pagePath": "pages/home/index",
+				"iconPath": "static/tabbar/home.png",
+				"selectedIconPath": "static/tabbar/home_active.png",
+				"text": "首页",
+				"visible": true
+			},
+			{
+				"pagePath": "pages/social/index",
+				"iconPath": "static/tabbar/social.png",
+				"selectedIconPath": "static/tabbar/social_active.png",
+				"text": "社区"
+			},
+			{
+				"pagePath": "pages/mall/index",
+				"iconPath": "static/tabbar/mall.png",
+				"selectedIconPath": "static/tabbar/mall_active.png",
+				"text": "商城"
+			},
+			{
+				"pagePath": "pages/mine/index",
+				"iconPath": "static/tabbar/mine.png",
+				"selectedIconPath": "static/tabbar/mine_active.png",
+				"text": "我的"
+			}
+		]
+	},
+	"globalStyle": {
+		"navigationStyle": "custom",
+		"bounce": "none"
+	},
+	"easycom": {
+		"autoscan": true,
+		"custom": {
+			"^u-(.*)": "uview-ui/components/u-$1/u-$1.vue"
+		}
+	}
+}

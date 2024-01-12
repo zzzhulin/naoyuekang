@@ -38,8 +38,8 @@
 		<!-- banner -->
 		<view class="banner-container">
 			<image :src="cdnUrl + '/index/bg_19.png'" class="banner-image" mode="widthFix"></image>
-			<image :src="cdnUrl + '/index/bg_20.png'" class="banner-image" v-if="appStatus == '1'" mode="widthFix"></image>
-			<image :src="cdnUrl + '/index/bg_21.png'" class="banner-image" v-else mode="widthFix"></image>
+			<image :src="cdnUrl + '/index/bg_20.png'" class="banner-image" mode="widthFix" v-if="appStatus == '1'"></image>
+			<image :src="cdnUrl + '/index/bg_21.png'" class="banner-image" mode="widthFix" v-else></image>
 		</view>
 
 		<!-- 精选对话 -->
@@ -101,7 +101,7 @@ export default {
 			categories: [], // 文章分类
 			articles: [], // 文章列表
 			categoryId: '', // 当前文章分类id
-			page: 1, // 文章页码
+			page: 1, // 页码
 			hasMore: false // 加载更多
 		};
 	},
@@ -138,6 +138,7 @@ export default {
 			this.page = 1;
 			this.categoryId = item.id;
 			this.getCategoryListByCategoryId(item.id);
+			console.log(item);
 		},
 		getLanternBanner(field, type) {
 			this.$store
@@ -167,7 +168,9 @@ export default {
 					sourceType
 				})
 				.then((res) => {
-					fn(res[0].id);
+					if (res.length > 0) {
+						fn(res[0].id);
+					}
 				})
 				.catch((err) => {
 					console.log('========err', err);
@@ -194,8 +197,10 @@ export default {
 				})
 				.then((res) => {
 					this.categories = res;
-					this.categoryId = res[0].id;
-					this.getCategoryListByCategoryId(res[0].id);
+					if (res.length > 0) {
+						this.categoryId = res[0].id;
+						this.getCategoryListByCategoryId(res[0].id);
+					}
 				})
 				.catch((err) => {
 					console.log('========err', err);
@@ -231,6 +236,11 @@ export default {
 	/deep/ .u-navbar {
 		height: 184rpx;
 	}
+
+	/deep/ .u-navbar__content__left {
+		padding: 0 30rpx;
+	}
+
 	.search-container {
 		display: flex;
 		align-items: center;
@@ -239,11 +249,15 @@ export default {
 		height: 64rpx;
 		border-radius: 252rpx;
 		padding: 0 24rpx;
-		margin-left: 4rpx;
 		background-color: rgba(238, 238, 238, 0.8);
 		font-size: 26rpx;
 		color: #979799;
 	}
+	/*  #ifdef  APP-PLUS  */
+	.search-container {
+		width: calc(100vw - 60rpx);
+	}
+	/*  #endif  */
 
 	.search-icon {
 		width: 40rpx;
@@ -282,8 +296,9 @@ export default {
 		height: 6rpx;
 		border-radius: 212rpx;
 	}
-	
+
 	/deep/ .u-scroll-list__indicator__line__bar {
+		height: 6rpx;
 		border-radius: 212rpx;
 	}
 

@@ -52,3 +52,16 @@ export function tansParams(params) {
   }
   return result
 }
+
+/**
+* 处理页面参数
+* @param string 字符串
+*/
+export function parseString(string) {
+  // 检查字符串是否为空、null、undefined或者内容为'null'、'undefined'
+  if (!string || string === 'null' || string === 'undefined') {
+    return '';
+  } else {
+    return string;
+  }
+}

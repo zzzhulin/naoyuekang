@@ -15,6 +15,23 @@
 			"path": "pages/mine/index"
 		}
 	],
+	"subPackages": [{
+		"root": "subPackages/mall/",
+		"pages": [
+			{
+				"path": "search/index"
+			},
+			{
+				"path": "search/result"
+			},
+			{
+				"path" : "category/index"
+			},
+			{
+				"path" : "product/index"
+			}
+		]
+	}],
 	"tabBar": {
 		"color": "#000026",
 		"selectedColor": "#1A8DFF",

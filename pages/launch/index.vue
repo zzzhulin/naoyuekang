@@ -1,7 +1,7 @@
 <template>
 	<view class="page-launch">
 		<!-- 倒计时 -->
-		<view class="timer" v-if="seconds > 0">
+		<view class="timer" v-if="seconds >= 0">
 			<view class="countdown">{{ seconds }}s</view>
 			<view class="skip-button" @click="skip">跳过</view>
 		</view>

@@ -7,13 +7,24 @@ import {
 	getReplyList,
 	getPickupList,
 	getBarrageReply,
-	getCouponList
+	getCouponList,
+	createProductPoster,
+	getActivitySetting,
+	getNovemberActivityV4_1,
+	getReplyDetail,
+	getCartLimit
 } from "@/api/mall";
 
-const system = {
-	state: {},
+const mall = {
+	state: {
+		actionLogId: '',
+	},
 
-	mutations: {},
+	mutations: {
+		setActionLogId: (state, data) => {
+			state.actionLogId = data
+		},
+	},
 
 	actions: {
 		GetProductCategories({
@@ -74,6 +85,7 @@ const system = {
 			return new Promise((resolve, reject) => {
 				getProductDetail(params)
 					.then((res) => {
+						commit('setActionLogId', res.data.action_log_id)
 						resolve(res.data || null);
 					})
 					.catch((error) => {
@@ -145,7 +157,72 @@ const system = {
 					});
 			});
 		},
+		CreateProductPoster({
+			commit
+		}, params) {
+			return new Promise((resolve, reject) => {
+				createProductPoster(params)
+					.then((res) => {
+						resolve(res.data.poster || '');
+					})
+					.catch((error) => {
+						reject(error);
+					});
+			});
+		},
+		GetActivitySetting({
+			commit
+		}, params) {
+			return new Promise((resolve, reject) => {
+				getActivitySetting(params)
+					.then((res) => {
+						resolve(res.data || null);
+					})
+					.catch((error) => {
+						reject(error);
+					});
+			});
+		},
+		GetNovemberActivityV4_1({
+			commit
+		}, params) {
+			return new Promise((resolve, reject) => {
+				getNovemberActivityV4_1(params)
+					.then((res) => {
+						resolve(res.data || '');
+					})
+					.catch((error) => {
+						reject(error);
+					});
+			});
+		},
+		GetReplyDetail({
+			commit
+		}, params) {
+			return new Promise((resolve, reject) => {
+				getReplyDetail(params)
+					.then((res) => {
+						resolve(res.data || null);
+					})
+					.catch((error) => {
+						reject(error);
+					});
+			});
+		},
+		GetCartLimit({
+			commit
+		}) {
+			return new Promise((resolve, reject) => {
+				getCartLimit(params)
+					.then((res) => {
+						resolve(res.data || '');
+					})
+					.catch((error) => {
+						reject(error);
+					});
+			});
+		},
 	},
 };
 
-export default system;
+export default mall;

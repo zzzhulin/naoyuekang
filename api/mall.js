@@ -1,5 +1,12 @@
 import request from "@/utils/request"
 
+export function getUserInfo() {
+	return request({
+		url: "/osapi/user/infoGet",
+		isPhp: true
+	})
+}
+
 export function getProductCategories(params) {
 	return request({
 		url: "/nykapi/v2.product/get_product_categories",
@@ -67,6 +74,46 @@ export function getCouponList(params) {
 	return request({
 		url: "/ebapi/coupons_api/get_issue_coupon_list",
 		params,
+		isPhp: true
+	})
+}
+
+export function createProductPoster(params) {
+	return request({
+		url: "/shareapi/index/create_product_poster",
+		method: 'POST',
+		data: params,
+		isPhp: true
+	})
+}
+
+export function getActivitySetting(params) {
+	return request({
+		url: "/nykapi/v1.landing_page/get_activity_setting",
+		params,
+		isPhp: true
+	})
+}
+
+export function getNovemberActivityV4_1(params) {
+	return request({
+		url: "/small/api/share/getNovemberActivityV4_1",
+		params,
+	})
+}
+
+export function getReplyDetail(params) {
+	return request({
+		url: "/nykapi/reply/getReplyDetail",
+		params,
+		isPhp: true
+	})
+}
+
+
+export function getCartLimit() {
+	return request({
+		url: "/nykapi/Product/getCartLimit",
 		isPhp: true
 	})
 }

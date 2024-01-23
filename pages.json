@@ -13,22 +13,42 @@
 		},
 		{
 			"path": "pages/mine/index"
+		},
+		{
+			"path": "pages/academician/index"
+		},
+		{
+			"path": "pages/academician/detail"
+		},
+		{
+			"path" : "pages/academician/video"
 		}
 	],
 	"subPackages": [{
 		"root": "subPackages/mall/",
-		"pages": [
-			{
+		"pages": [{
 				"path": "search/index"
 			},
 			{
 				"path": "search/result"
 			},
 			{
-				"path" : "category/index"
+				"path": "category/index"
 			},
 			{
-				"path" : "product/index"
+				"path": "product/index"
+			},
+			{
+				"path": "activity/index"
+			},
+			{
+				"path": "evaluation/index"
+			},
+			{
+				"path": "case/index"
+			},
+			{
+				"path": "case/detail"
 			}
 		]
 	}],

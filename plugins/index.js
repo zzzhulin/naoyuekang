@@ -1,6 +1,7 @@
 import tab from './tab'
 import auth from './auth'
 import modal from './modal'
+import image from './image'
 
 export default {
   install(Vue) {
@@ -10,5 +11,7 @@ export default {
     Vue.prototype.$auth = auth
     // 模态框对象
     Vue.prototype.$modal = modal
+		// 图片操作
+		Vue.prototype.$image = image
   }
 }

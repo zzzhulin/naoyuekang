@@ -46,3 +46,11 @@ export function getCategoryListByCategoryId(params) {
 		params,
 	})
 }
+
+export function getZxListByCate(params) {
+	return request({
+		url: "/nykapi/news/getZxListByCate",
+		params,
+		isPhp: true
+	})
+}

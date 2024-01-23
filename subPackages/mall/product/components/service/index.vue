@@ -1,7 +1,7 @@
 <template>
 	<view class="component-service">
 		<!-- 购买类型 -->
-		<view class="cell-item">
+		<view class="cell-item" v-if="attr.length > 0 && seckillId" @click="click('sku')">
 			<view class="cell-content">
 				<text class="label">购买类型</text>
 				<text class="value">{{ selectedAttr }}</text>
@@ -13,7 +13,7 @@
 		</view>
 
 		<!-- 优惠券 -->
-		<view class="cell-item" v-if="coupons.length > 0 && !seckillId">
+		<view class="cell-item" v-if="coupons.length > 0 && !seckillId" @click="click('coupon')">
 			<view class="cell-content">
 				<text class="label">优惠券</text>
 				<text class="value" :class="[!hasCoupon && 'disabled']">{{ hasCoupon ? '领取' + (coupons[0].coupon_price | price) + '元优惠券' : '暂无优惠券可领取' }}</text>
@@ -41,6 +41,7 @@ import config from '@/config';
 export default {
 	name: 'service',
 	props: {
+		attr: Array, // 规格属性
 		selectedAttr: String, // 选中规格
 		buyNumber: Number, // 购买数量
 		seckillId: String, // 折扣商品id
@@ -58,6 +59,11 @@ export default {
 		return {
 			cdnUrl: config.cdnUrl
 		};
+	},
+	methods: {
+		click(ref) {
+			this.$emit('click', ref);
+		}
 	}
 };
 </script>

@@ -21,6 +21,8 @@ const request = config => {
 	if (getToken() && !isToken) {
 		config.header['Authorization'] = 'Basic c21hbGwtYXBpOnNtYWxsLWFwaQ==' + getToken()
 	}
+	// config.header['Authorization'] = 'bearer d8d564ea-a6af-43a9-b37e-9a6a424c4315'
+	// config.header['access-token'] = 'ffbaca58-04a9-48c2-8253-2f499f337fd5'
 	const isPhp = config.isPhp || false
 	// get请求映射params参数
 	if (config.params) {

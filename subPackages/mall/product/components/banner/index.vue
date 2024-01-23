@@ -1,7 +1,7 @@
 <template>
 	<view class="component-banner">
 		<!-- 轮播图 -->
-		<u-swiper :list="banner" :duration="400" :autoplay="false" height="750rpx" radius="0" @change="(e) => (current = e.current)">
+		<u-swiper :list="banner" :duration="400" :autoplay="false" keyName="url" height="750rpx" radius="0" @click="previewImage" @change="(e) => (current = e.current)">
 			<view slot="indicator" class="indicator">
 				<view class="indicator-dot" v-for="(item, index) in banner" :key="index" :class="[index === current && 'active']"></view>
 			</view>
@@ -16,7 +16,9 @@
 		</view>
 
 		<!-- 套餐商品 -->
-		<image :src="cdnUrl + '/order/pic_01.png'" class="package-image" v-if="packageShow"></image>
+		<auth-button>
+			<image :src="cdnUrl + '/order/pic_01.png'" class="package-image" v-if="packageShow" @click="selectAttr"></image>
+		</auth-button>
 	</view>
 </template>
 
@@ -37,6 +39,22 @@ export default {
 			cdnUrl: config.cdnUrl,
 			current: 0 // 当前轮播图的index
 		};
+	},
+	methods: {
+		//预览图片
+		previewImage(current) {
+			if (this.banner[current].type === 'video') {
+				return;
+			}
+			uni.previewImage({
+				urls: this.banner,
+				current,
+				indicator: 'default'
+			});
+		},
+		selectAttr() {
+			this.$emit('selectAttr', 1);
+		}
 	}
 };
 </script>
@@ -44,14 +62,6 @@ export default {
 <style lang="scss" scoped>
 .component-banner {
 	position: relative;
-
-	/deep/ .u-swiper__indicator {
-		display: flex;
-		justify-content: center;
-		width: 100%;
-		height: 60rpx;
-		bottom: 0;
-	}
 
 	.indicator {
 		display: flex;
@@ -69,6 +79,9 @@ export default {
 
 	.indicator-dot.active {
 		background-color: #000;
+	}
+
+	.barrage-list {
 	}
 
 	.barrage-item {

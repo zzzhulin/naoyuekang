@@ -11,7 +11,10 @@
 				<text>{{ data.store_name }}</text>
 				<text class="tip" v-if="!seckillId && data.discount_price / data.price < 0.7">点下方立即购买查看专属优惠</text>
 			</view>
-			<view class="share-button">
+			<view class="share-button" @click="share">
+				<!-- #ifdef MP-WEIXIN -->
+				<button open-type="share" class="share-btn" v-if="!isLogin"></button>
+				<!-- #endif -->
 				<image :src="cdnUrl + '/newMall/share01.png'" class="share-icon"></image>
 				<text>分享</text>
 			</view>
@@ -29,11 +32,13 @@
 </template>
 
 <script>
-import config from '@/config';
+import { cdnUrl, phpBaseUrl } from '@/config';
 export default {
 	name: 'introduction',
 	props: {
 		seckillId: String, // 折扣商品id
+		inviteCode: String, // 邀请码
+		appType: Number, // 分享类型
 		points: Number, // 商品积分
 		countdown: Number, // 限购倒计时
 		data: Object // 商品信息
@@ -43,8 +48,49 @@ export default {
 	},
 	data() {
 		return {
-			cdnUrl: config.cdnUrl
+			cdnUrl,
+			phpBaseUrl,
+			isLogin: this.$store.state.system.isLogin
 		};
+	},
+	methods: {
+		// 分享
+		share() {
+			if (this.isLogin) {
+				this.$emit('share');
+			} else {
+				this.shareApp();
+			}
+		},
+		shareApp() {
+			const { store_name, image, id } = this.data;
+			const sourceTime = new Date().getTime();
+			let path = `/subPackages/mall/product/index?id=${id}&isShare=true&sourceTime=${sourceTime}`;
+			if (this.seckillId) {
+				path += `&s_i=${this.seckillId}`;
+			}
+			if (this.appType === 2) {
+				path += `&inviteCode=${this.inviteCode}`;
+			} else {
+				path += `&r_c=${this.inviteCode}`;
+			}
+			console.log(path);
+			uni.share({
+				provider: 'weixin',
+				scene: 'WXSceneSession',
+				type: 5,
+				imageUrl: image,
+				title: store_name,
+				miniProgram: {
+					id: 'gh_e407523b61eb',
+					path,
+					// path: `/pages/mall/productDetail?id=5227`,
+					type: 0,
+					// webUrl: `${phpBaseUrl}/#/pages/mall/productDetail?id=5227`
+					webUrl: `${phpBaseUrl}/#${path}`
+				}
+			});
+		}
 	}
 };
 </script>
@@ -108,6 +154,16 @@ export default {
 		color: #242626;
 	}
 
+	.share-btn {
+		position: absolute;
+		width: 100%;
+		top: 0;
+		bottom: 0;
+		padding: 0;
+		opacity: 0;
+		z-index: 1;
+	}
+
 	.share-icon {
 		width: 64rpx;
 		height: 64rpx;
@@ -145,13 +201,6 @@ export default {
 		background-color: #ffffff;
 		text-align: center;
 		color: #f74e3f;
-	}
-
-	/deep/ .u-count-down__text {
-		line-height: normal;
-		padding: 0 10rpx;
-		font-size: 26rpx;
-		color: #fff;
 	}
 }
 </style>

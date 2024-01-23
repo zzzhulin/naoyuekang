@@ -6,16 +6,21 @@ import {
 	getArticlesBySectionId,
 	getCategoryListBySectionId,
 	getCategoryListByCategoryId,
+	getZxListByCate
 } from "@/api";
 
 const system = {
 	state: {
-		appStatus: ''
+		appStatus: '',
+		isLogin: false,
 	},
 
 	mutations: {
 		SET_APP_STATUS: (state, data) => {
 			state.appStatus = data
+		},
+		SET_IS_LOGIN: (state, data) => {
+			state.isLogin = data
 		},
 	},
 
@@ -111,10 +116,28 @@ const system = {
 					});
 			});
 		},
+		GetZxListByCate({
+			commit
+		}, params) {
+			return new Promise((resolve, reject) => {
+				getZxListByCate(params)
+					.then((res) => {
+						resolve(res.data.data || []);
+					})
+					.catch((error) => {
+						reject(error);
+					});
+			});
+		},
 		SetAppStatus({
 			commit
 		}, data) {
 			commit("SET_APP_STATUS", data)
+		},
+		SetIsLogin({
+			commit
+		}, data) {
+			commit("SET_IS_LOGIN", data)
 		},
 	},
 };

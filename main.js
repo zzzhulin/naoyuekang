@@ -4,7 +4,7 @@ import uView from "uview-ui";
 import store from './store' // store
 import plugins from './plugins' // plugins
 import * as filters from './filters'; // filters
-import './permission' // permission
+// import './permission' // permission
 Vue.use(plugins)
 Vue.use(uView)
 

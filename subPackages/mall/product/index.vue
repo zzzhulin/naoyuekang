@@ -1,6 +1,6 @@
 <template>
 	<view class="page-product">
-		<!-- navbar -->
+		<!-- 顶部导航栏 -->
 		<u-navbar :safeAreaInsetTop="true" :fixed="true" :placeholder="true" :autoBack="true" title="商品详情">
 			<view class="back-button" slot="left">
 				<image :src="cdnUrl + '/mine/left-b.png'" class="back-icon"></image>
@@ -14,98 +14,111 @@
 		<discount :data="seckillInfo" v-if="seckillId"></discount>
 
 		<!-- 商品价格、销量、名称、分享、限购 -->
-		<introduction :seckillId="seckillId" :points="points" :countdown="countdown" :data="storeInfo"></introduction>
+		<introduction
+			:seckillId="seckillId"
+			:appType="appType"
+			:inviteCode="inviteCode"
+			:points="points"
+			:countdown="countdown"
+			:data="storeInfo"
+			@share="generatePoster"
+		></introduction>
 
 		<!-- 每日福利 -->
-		<image :src="cdnUrl + '/activity/dailyBenefits_banner_01.png'" class="benefit-banner" mode="widthFix"></image>
+		<image :src="cdnUrl + '/activity/dailyBenefits_banner_01.png'" class="benefit-banner" mode="widthFix" @click="navigateTo"></image>
 
 		<!-- 购买类型、优惠券、服务 -->
-		<service :selectedAttr="selectedAttr" :buyNumber="buyNumber" :seckillId="seckillId" :coupons="coupons"></service>
+		<service :selectedAttr="selectedAttr" :buyNumber="buyNumber" :seckillId="seckillId" :coupons="coupons" :attr="productAttr" @click="openPopup"></service>
 
-		<view v-for="(attr, index) in productAttr" :key="index">
+		<!-- <view v-for="(attr, index) in productAttr" :key="index">
 			<text>{{ attr.attr_name }}</text>
-			<view v-for="(value, vIndex) in attr.attr_value" :key="vIndex">
-				<text @click="toggleCheck(attr, value)">{{ value.attr }}</text>
+			<view v-for="(value, vIndex) in attr.attr_value" :class="[value.check&&'checked']" :key="vIndex">
+				<text @click="toggleAttr(attr, value)">{{ value.attr }}</text>
 			</view>
 		</view>
-		<text>Selected Attributes: {{ selectedAttr }}</text>
+		<text>Selected Attributes: {{ selectedAttr }}</text> -->
 
-		<!-- 评价 -->
-		<view class="comment-container card" v-if="replyCount || pickupCount">
-			<!-- 商品评价 -->
-			<view class="comment-content">
-				<view class="card-header">
-					<view slot="title" class="card-title">商品评价({{ replyCount }})</view>
-					<view slot="value" class="card-link">
-						<text>查看全部</text>
-						<image :src="cdnUrl + '/mine/right-g.png'" class="arrow"></image>
-					</view>
-				</view>
-				<view class="comment-item" v-for="item in replyList" :key="item.id">
-					<view class="user-info">
-						<image :src="item.avatar" class="user-avatar"></image>
-						<text class="user-name">{{ item.nickname }}</text>
-						<u-rate
-							:value="item.product_score"
-							:readonly="true"
-							:inactiveIcon="cdnUrl + '/newMall/star_default.png'"
-							:activeIcon="cdnUrl + '/newMall/star_active.png'"
-							size="32rpx"
-						></u-rate>
-					</view>
-					<view class="user-comment">{{ item.comment }}</view>
-					<view class="reply-box" v-if="item.merchant_reply_content">
-						<view class="reply-title">官方回复</view>
-						<view class="reply-content">{{ item.merchant_reply_content }}</view>
-					</view>
-				</view>
-			</view>
-
-			<!-- 精选案例 -->
-			<view class="case-content"></view>
-		</view>
+		<!-- 商品评价、精选案例 -->
+		<evaluation
+			:productId="storeInfo.id"
+			:replyCount="replyCount"
+			:replyList="replyList"
+			:pickupCount="pickupCount"
+			:pickupList="pickupList"
+			v-if="replyCount || pickupCount"
+		></evaluation>
 
 		<!-- 图文详情 -->
-		<view class="decription-container" v-if="storeInfo.description">
-			<view class="title">图文详情</view>
-			<!-- 链接 -->
-			<view class="link-content" v-if="storeInfo.mp_jump_url">
-				<image :src="cdnUrl + '/nyk_data/activity/activity_turntable_pic/2023-12-13/2NAFY2Tdnn.png'" class="link-background"></image>
-				<view class="link-text">{{ storeInfo.mp_jump_name || '关于商品，想了解更多？科普一下吧！' }}</view>
-			</view>
+		<description :data="storeInfo" v-if="storeInfo.description"></description>
 
-			<!-- 富文本详情 -->
-			<rich-text :nodes="storeInfo.description"></rich-text>
-		</view>
+		<!-- 底部操作栏 -->
+		<tabbar :points="points" :seckillId="seckillId" :data="storeInfo" :badge="totalCartNum"></tabbar>
 
-		<!-- tabbar -->
+		<!-- 分享弹窗 -->
+		<popup-share ref="share" :data="storeInfo" :poster="poster" :appType="appType" :seckillId="seckillId" :inviteCode="inviteCode"></popup-share>
+
+		<!-- 规格弹窗 -->
+		<popup-sku
+			ref="sku"
+			:cartLimit="cartLimit"
+			:storeInfo="storeInfo"
+			:seckillInfo="seckillInfo"
+			:activityInfo="activityInfo"
+			:seckillId="seckillId"
+			:selectedValue="selectedValue"
+			:productAttr="productAttr"
+			@toggleAttr="toggleAttr"
+			@changeNumber="changeNumber"
+		></popup-sku>
+
+		<!-- 优惠券弹窗 -->
+		<popup-coupon ref="coupon" :list="coupons"></popup-coupon>
 	</view>
 </template>
 
 <script>
-import config from '@/config';
+import { cdnUrl } from '@/config';
 import banner from './components/banner';
 import discount from './components/discount';
 import introduction from './components/introduction';
 import service from './components/service';
-import { compact, pick, sampleSize, shuffle } from 'lodash';
+import evaluation from './components/evaluation';
+import description from './components/description';
+import tabbar from './components/tabbar';
+import popupShare from './components/popup-share';
+import popupSku from './components/popup-sku';
+import popupCoupon from './components/popup-coupon';
+import { sampleSize, shuffle } from 'lodash';
 export default {
 	components: {
 		banner,
 		discount,
 		introduction,
-		service
+		service,
+		evaluation,
+		description,
+		tabbar,
+		popupShare,
+		popupSku,
+		popupCoupon
 	},
 	data() {
 		return {
-			cdnUrl: config.cdnUrl,
-			id: '', // 商品id
+			cdnUrl,
+			isLogin: this.$store.state.system.isLogin,
+			poster: '', // 分享海报
+			appType: 0, // 分享类型
+			inviteCode: '', // 邀请码
 			seckillId: '', // 折扣商品id
 			points: 0, // 商品积分
+			totalCartNum: 0, // 购物车数量
+			cartLimit: '', // 购物车可加购数量
 			banner: [], // 轮播图
 			barrages: [], // 弹幕
 			storeInfo: {
-				sku_package: 0, // 套餐商品
+				id: 0, // 商品id
+				sku_package: 0, // 是否有套餐商品
+				sku_package_list: [], // 套餐商品列表
 				discount_price: 0, // 折扣价
 				price: 0, // 销售价
 				sales: 0, // 销量
@@ -113,7 +126,12 @@ export default {
 				stock: 0, // 限购数量
 				mp_jump_url: '', // 链接url
 				mp_jump_name: '', // 链接文本
-				description: '' // 图文详情
+				description: '', // 图文详情
+				image: '', // 商品分享图片
+				show_cart: 0, // 展示购物车
+				userCollect: false, // 是否被收藏
+				discount: 0, // 折扣
+				retail_pre_back: 0 // 佣金
 			},
 			seckillInfo: {
 				ot_price: 0, // 原价
@@ -121,13 +139,23 @@ export default {
 				kill_dis: '', // 折扣
 				sales: 0 // 销量
 			},
+			activityInfo: {
+				limit_num: 0, // 限购数量
+				used_num: 0 // 已购数量
+			},
 			countdown: 0, // 限购倒计时
 			coupons: [], // 优惠券
 			productAttr: [], // 商品规格
 			productValue: null, // 商品规格信息
 			selectedAttr: '', // 选中的规格
-			selectedSku: {
-				suk: '' // 选中规格
+			selectedValue: {
+				image: '', // 规格图片
+				price: 0, // 规格价格
+				stock: 0, // 规格库存
+				suk: '', // 规格
+				discount: 0, // 折扣
+				discount_price: 0, // 折扣价格
+				retail_pre_back: 0 // 佣金
 			},
 			buyNumber: 1, // 购买数量
 			replyCount: 0, // 商品评价数量
@@ -137,11 +165,11 @@ export default {
 		};
 	},
 	onLoad(option) {
-		this.id = option.id;
+		const pid = this.$store.state.mall.actionLogId || '';
 		this.seckillId = option.seckill_id;
 		this.points = option.points;
 		// 获取商品详情
-		this.getProductDetail(option);
+		this.getProductDetail({ ...option, pid });
 		// 获取弹幕
 		this.getBarrageReply(option.id);
 		// 获取优惠券
@@ -151,34 +179,91 @@ export default {
 		// 获取精选案例
 		this.getPickupList(option.id);
 	},
+	onShow() {
+		if (this.isLogin) {
+			// 获取用户信息
+			this.getUserInfo();
+			// 获取可加购最大值
+			this.getCartLimit();
+		}
+	},
 	methods: {
-		toggleCheck(attr, value) {
-			attr.attr_value.forEach((v) => {
-				v.check = false;
+		// 加减购买数量
+		changeNumber(value) {
+			this.buyNumber = value;
+		},
+		// 规格切换
+		toggleAttr(attr, value) {
+			attr.attr_value.forEach((item) => {
+				item.check = false;
 			});
 			value.check = !value.check;
-
-			// Get selected attributes
 			this.selectedAttr = this.getSelectedAttributes();
+			this.selectedValue = this.productValue[this.selectedAttr];
 		},
+		// 获取选中的规格
 		getSelectedAttributes() {
 			const selectedAttrs = [];
-
 			this.productAttr.forEach((attr) => {
-				attr.attr_value.forEach((value) => {
-					if (value.check) {
-						selectedAttrs.push(value.attr);
+				attr.attr_value.forEach((item) => {
+					if (item.check) {
+						selectedAttrs.push(item.attr);
 					}
 				});
 			});
-
-			// Join selected attributes into a string
 			return selectedAttrs.join(',');
 		},
-		getSku(value) {},
-		// 选择sku
-		chooseSku(sku, isDefault) {
-			this.selectedSku = pick(this.productValue, sku);
+		// 生成海报
+		generatePoster() {
+			uni.showLoading({
+				title: '图片生成中',
+				mask: true
+			});
+			const params = {
+				pid: this.storeInfo.id,
+				app_type: this.appType
+			};
+			if (this.seckillId) {
+				params.app_type = '4';
+				params.seckill_id = this.seckillId;
+			}
+			this.$store
+				.dispatch('CreateProductPoster', params)
+				.then((res) => {
+					uni.hideLoading();
+					if (res) {
+						this.poster = res;
+						this.$refs.share.open();
+					}
+				})
+				.catch((err) => {
+					console.log('========err', err);
+				});
+		},
+		// 跳转活动页面
+		navigateTo() {
+			this.$tab.navigateTo('/subPackages/mall/activity/index?tag=Everyday_activity');
+		},
+		// 打开popup
+		openPopup(ref) {
+			this.$refs[ref].open();
+		},
+		getUserInfo() {
+			this.$store
+				.dispatch('GetUserInfo')
+				.then((res) => {
+					if (res) {
+						this.inviteCode = res.invite_code;
+						if (res.group_type === 1) {
+							this.appType = 2;
+						} else {
+							this.appType = 3;
+						}
+					}
+				})
+				.catch((err) => {
+					console.log('========err', err);
+				});
 		},
 		getProductDetail(params) {
 			this.$store
@@ -189,8 +274,9 @@ export default {
 						const { storeInfo, seckill_info, activityInfo, productAttr, productValue } = res;
 						const { video_url, slider_image } = storeInfo;
 						storeInfo.description = storeInfo.description.replace(/\<img/gi, '<img style="display:block;max-width:100%;min-width: 100%;height: auto;"');
-						this.banner = compact([video_url, ...slider_image]);
+						this.banner = [{ type: 'video', url: video_url }, ...slider_image.map((item) => ({ type: 'image', url: item }))].filter((item) => item.url);
 						this.storeInfo = storeInfo;
+						this.activityInfo = activityInfo;
 						this.seckillInfo = Array.isArray(seckill_info) ? this.seckillInfo : seckill_info;
 						this.countdown = activityInfo ? activityInfo.end_at * 1000 - nowTime : 0;
 						this.productAttr = productAttr.map((attr) => {
@@ -201,6 +287,7 @@ export default {
 						this.productValue = productValue;
 						// 初始化选中的属性
 						this.selectedAttr = this.getSelectedAttributes();
+						this.selectedValue = this.productValue[this.selectedAttr];
 					}
 				})
 				.catch((err) => {
@@ -262,14 +349,67 @@ export default {
 			this.$store
 				.dispatch('GetCouponList', { pid, limit: 20 })
 				.then((res) => {
-					if (res) {
-						this.coupons = res;
-					}
+					this.coupons = res;
+				})
+				.catch((err) => {
+					console.log('========err', err);
+				});
+		},
+		getCartLimit() {
+			this.$store
+				.dispatch('GetCartLimit')
+				.then((res) => {
+					this.cartLimit = res;
 				})
 				.catch((err) => {
 					console.log('========err', err);
 				});
 		}
+	},
+	onShareAppMessage(res) {
+		const { store_name, image, id } = this.storeInfo;
+		const sourceTime = new Date().getTime();
+		let appType = this.appType;
+		let path = `/subPackages/mall/product/index?id=${id}&isShare=true&sourceTime=${sourceTime}`;
+		if (res.from === 'menu') {
+			appType = 3;
+		}
+		if (this.seckillId) {
+			path += `&s_i=${this.seckillId}`;
+		}
+		if (appType === 2) {
+			path += `&inviteCode=${this.inviteCode}`;
+		} else {
+			path += `&r_c=${this.inviteCode}`;
+		}
+		console.log(path);
+		return {
+			title: store_name,
+			path,
+			imageUrl: this.isLogin ? this.poster : image
+		};
+	},
+	onShareTimeline(res) {
+		const { store_name, image, id } = this.storeInfo;
+		const sourceTime = new Date().getTime();
+		let appType = this.appType;
+		let path = `/subPackages/mall/product/index?id=${id}&isShare=true&sourceTime=${sourceTime}`;
+		if (res.from === 'menu') {
+			appType = 3;
+		}
+		if (this.seckillId) {
+			path += `&s_i=${this.seckillId}`;
+		}
+		if (appType === 2) {
+			path += `&inviteCode=${this.inviteCode}`;
+		} else {
+			path += `&r_c=${this.inviteCode}`;
+		}
+		return {
+			title: store_name,
+			path,
+			imageUrl: this.isLogin ? this.poster : image
+		};
 	}
 };
 </script>
@@ -278,6 +418,7 @@ export default {
 .page-product {
 	min-height: 100vh;
 	background-color: #f8f8f8;
+	padding-bottom: calc(120rpx + env(safe-area-inset-bottom));
 
 	/deep/ .u-navbar__content__left {
 		padding: 0;
@@ -306,113 +447,27 @@ export default {
 		margin: auto;
 	}
 
-	.decription-container {
-		padding-bottom: calc(200rpx + env(safe-area-inset-bottom));
-	}
-
-	.decription-container .title {
+	/deep/ .u-swiper__indicator {
 		display: flex;
 		justify-content: center;
-		align-items: center;
-		height: 115rpx;
-		font-size: 30rpx;
-		color: #a6abad;
-	}
-
-	.link-content {
-		display: flex;
-		align-items: center;
-		position: relative;
-		height: 166rpx;
-		font-size: 28rpx;
-		color: #242426;
-	}
-
-	.link-background {
-		position: absolute;
 		width: 100%;
-		height: 166rpx;
-		z-index: 1;
+		height: 58rpx;
+		bottom: 0;
 	}
 
-	.link-text {
-		margin-left: 60rpx;
-		font-size: 32rpx;
-		font-weight: 600;
-		color: #242426;
-		z-index: 5;
-	}
-
-	.card {
-		margin: 20rpx;
-		border-radius: 24rpx;
-		background: #ffffff;
-		box-shadow: 0px 8rpx 30rpx 0rpx rgba(0, 0, 0, 0.02);
-	}
-
-	.card-header {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-	}
-
-	.card-title {
-		margin-bottom: 20rpx;
-		font-size: 34rpx;
-		font-weight: bold;
-		color: #242526;
-	}
-
-	.card-link {
-		font-size: 24rpx;
-		color: #a6abad;
-	}
-
-	.card-link .arrow {
-		width: 15rpx;
-		height: 20rpx;
-		margin-left: 10rpx;
-	}
-
-	.comment-container {
-		padding: 20rpx 0 10rpx 0;
-	}
-
-	.comment-content {
-		padding: 20rpx 30rpx;
-	}
-
-	.user-info {
-		display: flex;
-		align-items: center;
-		margin: 20rpx 0;
-	}
-
-	.user-avatar {
-		width: 60rpx;
-		height: 60rpx;
-		border-radius: 60rpx;
-	}
-
-	.user-name {
-		margin: 0 20rpx;
-		font-size: 30rpx;
-		font-weight: bold;
-		color: #222222;
+	/deep/ .u-count-down__text {
+		line-height: normal;
+		padding: 0 10rpx;
+		font-size: 26rpx;
+		color: #fff;
 	}
 
 	/deep/ .u-rate .u-icon__img {
-		padding: 0 !important;
 		margin-right: 8rpx;
 	}
 
-	@keyframes barrageAnimate {
-		0% {
-			transform: translateX(0);
-		}
-		100% {
-			transform: translateX(-1700rpx);
-		}
+	/deep/ .u-number-box__input {
+		margin: 0 10rpx;
 	}
 }
 </style>

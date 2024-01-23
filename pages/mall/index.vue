@@ -156,6 +156,8 @@ export default {
 					if (res.length > 0) {
 						this.categoryId = res[0].id;
 						this.getProductsByCategoryId(res[0].id);
+					} else {
+						this.getProductsByCategoryId(this.pid);
 					}
 				})
 				.catch((err) => {
@@ -312,17 +314,19 @@ export default {
 	}
 
 	.category-name {
-		display: flex;
-		align-items: center;
-		justify-content: center;
 		width: 96rpx;
 		height: 96rpx;
+		line-height: 96rpx;
 		border-radius: 50%;
 		border: 1px solid #fe3838;
 		background-color: #fff2f0;
 		font-size: 28rpx;
 		font-weight: bold;
 		color: #fe3838;
+		text-align: center;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
 	}
 
 	.category-image {

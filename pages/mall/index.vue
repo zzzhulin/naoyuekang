@@ -7,7 +7,7 @@
 		<u-sticky :bgColor="navbarBgColor">
 			<u-navbar :fixed="false" bgColor="transparent">
 				<view class="navbar-title" slot="left">健康商城</view>
-				<view class="search-container" slot="center" @click="navigateTo('/subPackages/mall/search/index')">
+				<view class="search-container" slot="center" @click="navigateTo('/subpackage/mall/search/index')">
 					<image class="search-icon" :src="cdnUrl + '/mall/icon_02.png'"></image>
 					<text>搜索你想要的宝贝</text>
 				</view>
@@ -111,7 +111,7 @@ export default {
 		// 商品分类切换
 		onCategoryChange(item) {
 			if (!item) {
-				this.navigateTo('/subPackages/mall/category/index');
+				this.navigateTo('/subpackage/mall/category/index');
 				return;
 			}
 			this.page = 1;

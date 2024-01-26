@@ -42,7 +42,7 @@ export default {
 		// 跳转页面
 		navigateTo(id) {
 			const from = this.from || '';
-			const url = `/subPackages/mall/product/index?id=${id}&from=${from}`;
+			const url = `/subpackage/mall/product/index?id=${id}&from=${from}`;
 			this.$tab.navigateTo(url);
 		}
 	}

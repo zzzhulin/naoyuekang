@@ -105,7 +105,7 @@ export default {
 	data() {
 		return {
 			cdnUrl,
-			isLogin: this.$store.state.system.isLogin,
+			isLogin: this.$store.state.user.isLogin,
 			poster: '', // 分享海报
 			appType: 0, // 分享类型
 			inviteCode: '', // 邀请码
@@ -242,7 +242,7 @@ export default {
 		},
 		// 跳转活动页面
 		navigateTo() {
-			this.$tab.navigateTo('/subPackages/mall/activity/index?tag=Everyday_activity');
+			this.$tab.navigateTo('/subpackage/mall/activity/index?tag=Everyday_activity');
 		},
 		// 打开popup
 		openPopup(ref) {
@@ -370,7 +370,7 @@ export default {
 		const { store_name, image, id } = this.storeInfo;
 		const sourceTime = new Date().getTime();
 		let appType = this.appType;
-		let path = `/subPackages/mall/product/index?id=${id}&isShare=true&sourceTime=${sourceTime}`;
+		let path = `/subpackage/mall/product/index?id=${id}&isShare=true&sourceTime=${sourceTime}`;
 		if (res.from === 'menu') {
 			appType = 3;
 		}
@@ -393,7 +393,7 @@ export default {
 		const { store_name, image, id } = this.storeInfo;
 		const sourceTime = new Date().getTime();
 		let appType = this.appType;
-		let path = `/subPackages/mall/product/index?id=${id}&isShare=true&sourceTime=${sourceTime}`;
+		let path = `/subpackage/mall/product/index?id=${id}&isShare=true&sourceTime=${sourceTime}`;
 		if (res.from === 'menu') {
 			appType = 3;
 		}

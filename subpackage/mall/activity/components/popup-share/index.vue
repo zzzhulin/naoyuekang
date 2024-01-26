@@ -21,11 +21,7 @@ import { cdnUrl, phpBaseUrl } from '@/config';
 export default {
 	name: 'popup-share',
 	props: {
-		seckillId: String, // 折扣商品id
-		inviteCode: String, // 邀请码
-		appType: Number, // 分享类型
-		poster: String, // 商品海报
-		data: Object // 商品信息
+		poster: String // 商品海报
 	},
 	options: {
 		virtualHost: true //  去掉组件外层节点
@@ -36,19 +32,14 @@ export default {
 			show: false,
 			list: [
 				{
-					code: 'weixin',
-					icon: '/newEdition/shareWX.png',
-					text: '微信好友'
-				},
-				{
 					code: 'poster',
 					icon: '/newEdition/dowmImg.png',
 					text: '保存海报'
 				},
 				{
-					code: 'h5',
-					icon: '/newEdition/linkImg.png',
-					text: '生成专属链接'
+					code: 'weixin',
+					icon: '/newEdition/shareWX.png',
+					text: '微信好友'
 				}
 			]
 		};
@@ -59,31 +50,23 @@ export default {
 				case 'weixin':
 					this.shareApp();
 					break;
-				case 'h5':
-					this.shareH5();
+				case 'poster':
+					this.savePoster();
 					break;
 				default:
 					break;
 			}
 		},
 		shareApp() {
-			const { store_name, id } = this.data;
 			const sourceTime = new Date().getTime();
-			let path = `/subPackages/mall/product/index?id=${id}&isShare=true&sourceTime=${sourceTime}`;
-			if (this.seckillId) {
-				path += `&s_i=${this.seckillId}`;
-			}
-			if (this.appType === 2) {
-				path += `&inviteCode=${this.inviteCode}`;
-			} else {
-				path += `&r_c=${this.inviteCode}`;
-			}
+			const inviteCode = this.$store.state.user.inviteCode;
+			const path = `/subpackage/mall/activity/index?tag=Everyday_activity&r_c=${inviteCode}&sourceTime=${sourceTime}`;
 			uni.share({
 				provider: 'weixin',
 				scene: 'WXSceneSession',
 				type: 5,
+				title: '每日福利',
 				imageUrl: this.poster,
-				title: store_name,
 				miniProgram: {
 					id: 'gh_e407523b61eb',
 					path,
@@ -94,12 +77,9 @@ export default {
 				}
 			});
 		},
-		shareH5() {
-			uni.setClipboardData({
-				data: `${phpBaseUrl}/#/pages/mall/productDetail?id=5227`,
-				success: function () {
-					this.$modal.showToast('链接复制成功，快去分享给好友吧')
-				}
+		savePoster() {
+			this.$image.save(this.poster, () => {
+				this.show = false;
 			});
 		},
 		open() {
@@ -122,19 +102,18 @@ export default {
 	position: fixed;
 	left: 0;
 	top: 0;
-	padding-bottom: 260rpx;
+	padding-bottom: 180rpx;
 	z-index: -1;
 }
 
 .poster {
-	width: 530rpx;
+	width: 470rpx;
 }
 
 .share-list {
 	display: flex;
 	align-items: center;
-	justify-content: space-between;
-	padding: 20rpx 56rpx;
+	justify-content: center;
 }
 
 .share-item {
@@ -143,11 +122,11 @@ export default {
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-	width: 33.33%;
+	width: 170rpx;
 	padding: 40rpx 0;
 	gap: 10rpx;
-	font-size: 28rpx;
-	color: #626566;
+	font-size: 26rpx;
+	color: #333;
 }
 
 .share-icon {

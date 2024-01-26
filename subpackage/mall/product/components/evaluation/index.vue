@@ -4,7 +4,7 @@
 		<view class="cell-content" v-if="replyList.length > 0">
 			<view class="cell-item">
 				<view class="cell-title">商品评价({{ replyCount }})</view>
-				<view class="cell-link" @click="navigateTo('/subPackages/mall/evaluation/index')">
+				<view class="cell-link" @click="navigateTo('/subpackage/mall/evaluation/index')">
 					<text>查看全部</text>
 					<image :src="cdnUrl + '/mine/right-g.png'" class="arrow"></image>
 				</view>
@@ -43,7 +43,7 @@
 		<view class="cell-content case" v-if="pickupList.length > 0 && pickupList[0].pick_up == '1'">
 			<view class="cell-item">
 				<view class="cell-title">精选案例({{ pickupCount }})</view>
-				<view class="cell-link" @click="navigateTo('/subPackages/mall/case/index')">
+				<view class="cell-link" @click="navigateTo('/subpackage/mall/case/index')">
 					<text>查看全部</text>
 					<image :src="cdnUrl + '/mine/right-g.png'" class="arrow"></image>
 				</view>

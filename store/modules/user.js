@@ -2,57 +2,115 @@ import config from '@/config'
 import storage from '@/utils/storage'
 import constant from '@/utils/constant'
 import {
-	login,
-	logout,
-	getInfo
-} from '@/api/login'
-import {
 	getToken,
 	setToken,
 	removeToken
 } from '@/utils/auth'
 import {
+	getOpenId,
+	getVeryCode,
+	login,
 	getUserInfo
-} from '@/api/login'
-
-const baseUrl = config.baseUrl
+} from '@/api/user'
 
 const user = {
 	state: {
+		isLogin: false,
 		inviteCode: '',
-		token: getToken(),
-		name: storage.get(constant.name),
-		avatar: storage.get(constant.avatar),
-		roles: storage.get(constant.roles),
-		permissions: storage.get(constant.permissions)
+		token: '',
+		thirdToken: '',
+		userId: '',
+		userName: '',
 	},
 
 	mutations: {
+		setIsLogin: (state, data) => {
+			state.isLogin = data
+		},
+		setToken: (state, data) => {
+			state.token = data
+		},
+		setThirdToken: (state, data) => {
+			state.thirdToken = data
+		},
+		setUserId: (state, data) => {
+			state.userId = data;
+		},
+		setUserName: (state, data) => {
+			state.userName = data;
+		},
 		setInviteCode: (state, data) => {
 			state.inviteCode = data
 		},
-		SET_TOKEN: (state, token) => {
-			state.token = token
-		},
-		SET_NAME: (state, name) => {
-			state.name = name
-			storage.set(constant.name, name)
-		},
-		SET_AVATAR: (state, avatar) => {
-			state.avatar = avatar
-			storage.set(constant.avatar, avatar)
-		},
-		SET_ROLES: (state, roles) => {
-			state.roles = roles
-			storage.set(constant.roles, roles)
-		},
-		SET_PERMISSIONS: (state, permissions) => {
-			state.permissions = permissions
-			storage.set(constant.permissions, permissions)
-		}
 	},
 
 	actions: {
+		// 获取openId
+		GetOpenId({
+			commit
+		}, params) {
+			return new Promise((resolve, reject) => {
+				getOpenId(params)
+					.then((res) => {
+						resolve(res.data.openId || '');
+					})
+					.catch((error) => {
+						reject(error);
+					});
+			});
+		},
+		// 获取验证码
+		GetVeryCode({
+			commit
+		}, params) {
+			return new Promise((resolve, reject) => {
+				getVeryCode(params)
+					.then((res) => {
+						resolve(res);
+					})
+					.catch((error) => {
+						reject(error);
+					});
+			});
+		},
+		// 登录
+		Login({
+			commit
+		}, params) {
+			return new Promise((resolve, reject) => {
+				login(params)
+					.then((res) => {
+						setIsLogin(true);
+						setToken(res.access_token);
+						storage.set(constant.thirdToken, res.thirdToken);
+						commit('setToken', res.access_token);
+						commit('setThirdToken', res.thirdToken);
+						commit('setUserId', res.userId);
+						commit('setUserName', res.userName);
+						resolve(res);
+					})
+					.catch((error) => {
+						reject(error);
+					});
+			});
+		},
+		// 退出登录
+		Logout({
+			commit,
+			state
+		}) {
+			return new Promise((resolve, reject) => {
+				logout(state.token).then(() => {
+					commit('setToken', '')
+					removeToken()
+					storage.clean()
+					resolve()
+				}).catch(error => {
+					reject(error)
+				})
+			})
+		},
+		// 获取用户信息
 		GetUserInfo({
 			commit
 		}) {
@@ -67,57 +125,6 @@ const user = {
 					});
 			});
 		},
-		// 登录
-		Login({
-			commit
-		}, userInfo) {
-			const username = userInfo.username.trim()
-			const password = userInfo.password
-			const code = userInfo.code
-			const uuid = userInfo.uuid
-			return new Promise((resolve, reject) => {
-				login(username, password, code, uuid).then(res => {
-					setToken(res.token)
-					commit('SET_TOKEN', res.token)
-					resolve()
-				}).catch(error => {
-					reject(error)
-				})
-			})
-		},
-
-		// 获取用户信息
-		GetInfo({
-			commit,
-			state
-		}) {
-			return new Promise((resolve, reject) => {
-				getInfo().then(res => {
-					resolve(res)
-				}).catch(error => {
-					reject(error)
-				})
-			})
-		},
-
-		// 退出系统
-		LogOut({
-			commit,
-			state
-		}) {
-			return new Promise((resolve, reject) => {
-				logout(state.token).then(() => {
-					commit('SET_TOKEN', '')
-					commit('SET_ROLES', [])
-					commit('SET_PERMISSIONS', [])
-					removeToken()
-					storage.clean()
-					resolve()
-				}).catch(error => {
-					reject(error)
-				})
-			})
-		}
 	}
 }
 

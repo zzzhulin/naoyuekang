@@ -114,7 +114,7 @@ export default {
 				.dispatch('GetNovemberActivityV4_1', {
 					basePicUrl: this.activityInfo.share_pic,
 					scene,
-					url: '/subPackages/mall/activity/index'
+					url: '/subpackage/mall/activity/index'
 				})
 				.then((res) => {
 					uni.hideLoading();
@@ -146,7 +146,7 @@ export default {
 	},
 	onShareAppMessage() {
 		const sourceTime = new Date().getTime();
-		const path = `/subPackages/mall/activity/index?tag=Everyday_activity&r_c=${this.inviteCode}&sourceTime=${sourceTime}`;
+		const path = `/subpackage/mall/activity/index?tag=Everyday_activity&r_c=${this.inviteCode}&sourceTime=${sourceTime}`;
 		return {
 			title: '每日福利',
 			path,
@@ -155,7 +155,7 @@ export default {
 	},
 	onShareTimeline() {
 		const sourceTime = new Date().getTime();
-		const path = `/subPackages/mall/activity/index?tag=Everyday_activity&r_c=${this.inviteCode}&sourceTime=${sourceTime}`;
+		const path = `/subpackage/mall/activity/index?tag=Everyday_activity&r_c=${this.inviteCode}&sourceTime=${sourceTime}`;
 		return {
 			title: '每日福利',
 			path,

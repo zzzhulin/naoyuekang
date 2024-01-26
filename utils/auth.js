@@ -1,4 +1,4 @@
-const TokenKey = 'App-Token'
+const TokenKey = 'access_token'
 
 export function getToken() {
   return uni.getStorageSync(TokenKey)

@@ -12,15 +12,11 @@ import {
 const system = {
 	state: {
 		appStatus: '',
-		isLogin: false,
 	},
 
 	mutations: {
-		SET_APP_STATUS: (state, data) => {
+		setAppStatus: (state, data) => {
 			state.appStatus = data
-		},
-		SET_IS_LOGIN: (state, data) => {
-			state.isLogin = data
 		},
 	},
 
@@ -31,6 +27,7 @@ const system = {
 			return new Promise((resolve, reject) => {
 				getAppStatus()
 					.then((res) => {
+						commit('setAppStatus',res.data.status)
 						resolve(res.data.status || '');
 					})
 					.catch((error) => {
@@ -128,16 +125,6 @@ const system = {
 						reject(error);
 					});
 			});
-		},
-		SetAppStatus({
-			commit
-		}, data) {
-			commit("SET_APP_STATUS", data)
-		},
-		SetIsLogin({
-			commit
-		}, data) {
-			commit("SET_IS_LOGIN", data)
 		},
 	},
 };

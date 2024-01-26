@@ -48,7 +48,7 @@ export default {
 		// 跳转页面
 		navigateTo(item) {
 			const keyword = item ? item.title : this.keyword;
-			const url = `/subPackages/mall/search/result?keyword=${keyword}`;
+			const url = `/subpackage/mall/search/result?keyword=${keyword}`;
 			this.$tab.navigateTo(url);
 		},
 		getHotSearchProducts() {

@@ -57,7 +57,7 @@ export default {
 		},
 		// 跳转案例详情
 		navigateTo(id) {
-			this.$tab.navigateTo(`/subPackages/mall/case/detail?id=${id}`);
+			this.$tab.navigateTo(`/subpackage/mall/case/detail?id=${id}`);
 		},
 		getPickupList(pid) {
 			this.$store

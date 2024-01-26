@@ -50,7 +50,7 @@ export default {
 		return {
 			cdnUrl,
 			phpBaseUrl,
-			isLogin: this.$store.state.system.isLogin
+			isLogin: this.$store.state.user.isLogin
 		};
 	},
 	methods: {
@@ -65,7 +65,7 @@ export default {
 		shareApp() {
 			const { store_name, image, id } = this.data;
 			const sourceTime = new Date().getTime();
-			let path = `/subPackages/mall/product/index?id=${id}&isShare=true&sourceTime=${sourceTime}`;
+			let path = `/subpackage/mall/product/index?id=${id}&isShare=true&sourceTime=${sourceTime}`;
 			if (this.seckillId) {
 				path += `&s_i=${this.seckillId}`;
 			}

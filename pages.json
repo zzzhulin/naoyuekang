@@ -21,11 +21,14 @@
 			"path": "pages/academician/detail"
 		},
 		{
-			"path" : "pages/academician/video"
+			"path": "pages/academician/video"
+		},
+		{
+			"path": "pages/login/index"
 		}
 	],
 	"subPackages": [{
-		"root": "subPackages/mall/",
+		"root": "subpackage/mall/",
 		"pages": [{
 				"path": "search/index"
 			},
@@ -49,6 +52,15 @@
 			},
 			{
 				"path": "case/detail"
+			}
+		]
+	}, {
+		"root": "subpackage/mine/",
+		"pages": [{
+				"path": "setting/index"
+			},
+			{
+				"path": "about/index"
 			}
 		]
 	}],
